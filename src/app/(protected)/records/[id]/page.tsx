@@ -127,7 +127,7 @@ export default function RecordDetailPage() {
 
         <div className="mt-3 flex flex-wrap gap-1.5">
           {record.kind === "cooking" ? (
-            <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-bold text-orange-700">
+            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-orange-700">
               🍳 料理
             </span>
           ) : (

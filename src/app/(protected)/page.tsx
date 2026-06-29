@@ -2,9 +2,10 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import { daysSince, formatDateJST, formatJST } from "@/lib/date";
+import { supabase } from "@/lib/supabase";
 import { CARE_TAGS } from "@/lib/tags";
+import { THEME_COLOR, BACKGROUND_COLOR } from "@/lib/theme";
 import type { Plant, RecordRow } from "@/lib/types";
 
 type KindFilter = "all" | "care" | "cooking";
@@ -83,13 +84,16 @@ export default function Home() {
     <main className="mx-auto max-w-md pb-24">
       {/* ヘッダー */}
       <div className="flex items-center justify-between p-4">
-        <h1 className="text-lg font-bold">Grow Log📝</h1>
+        <h1 className="text-lg font-bold" style={{ color: THEME_COLOR }}>
+          Grow Log📝
+        </h1>
         <button
           onClick={async () => {
             await supabase.auth.signOut();
             router.replace("/login");
           }}
-          className="text-sm text-gray-500"
+          className="text-sm"
+          style={{ color: THEME_COLOR }}
         >
           ログアウト
         </button>
@@ -114,7 +118,8 @@ export default function Home() {
         ))}
         <Link
           href="/plants/new"
-          className="flex-none rounded-full border border-dashed border-green-700 px-3 py-1.5 text-sm font-bold text-green-700"
+          className="flex-none rounded-full border border-dashed px-3 py-1.5 text-sm font-bold whitespace-nowrap"
+          style={{ borderColor: THEME_COLOR, color: THEME_COLOR }}
         >
           ＋ 追加
         </Link>
@@ -197,7 +202,7 @@ export default function Home() {
               <Link href={`/records/${r.id}`} className="block p-3">
                 <div className="mb-1 flex flex-wrap items-center gap-1.5">
                   {r.kind === "cooking" ? (
-                    <span className="rounded-full bg-orange-100 px-2 py-0.5 text-xs font-bold text-orange-700">
+                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-orange-700">
                       🍳 料理
                     </span>
                   ) : (
@@ -205,7 +210,8 @@ export default function Home() {
                       (t) => (
                         <span
                           key={t.key}
-                          className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-700"
+                          className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold"
+                          style={{ color: THEME_COLOR }}
                         >
                           {t.emoji}
                           {t.label}
@@ -257,11 +263,16 @@ function Chip({
   return (
     <button
       onClick={onClick}
-      className={`flex-none rounded-full border px-3 py-1.5 text-sm font-bold whitespace-nowrap ${
+      className="flex-none rounded-full border px-3 py-1.5 text-sm font-bold whitespace-nowrap"
+      style={
         active
-          ? "border-green-700 bg-green-700 text-white"
-          : "border-gray-200 text-gray-500"
-      }`}
+          ? {
+              backgroundColor: THEME_COLOR,
+              borderColor: THEME_COLOR,
+              color: "#fff",
+            }
+          : { borderColor: "#d1d5db", color: THEME_COLOR }
+      }
     >
       {children}
     </button>
