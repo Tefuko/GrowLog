@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { formatJST } from "@/lib/date";
+import { daysSince, formatDateJST, formatJST } from "@/lib/date";
 import { CARE_TAGS } from "@/lib/tags";
 import type { Plant, RecordRow } from "@/lib/types";
 
@@ -119,6 +119,18 @@ export default function Home() {
           ＋ 追加
         </Link>
       </div>
+
+      {/* 選択中の植物の経過日数 */}
+      {selectedPlant &&
+        (() => {
+          const p = plants.find((pl) => pl.id === selectedPlant);
+          if (!p?.started_at) return null;
+          return (
+            <p className="px-4 pb-2 text-right text-sm text-green-800">
+              {formatDateJST(p.started_at)}~ {daysSince(p.started_at)}日目
+            </p>
+          );
+        })()}
 
       {/* 世話/料理フィルター */}
       <div className="flex gap-2 border-b px-4 pb-3">
