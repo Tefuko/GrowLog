@@ -15,6 +15,7 @@ export default function EditRecordPage() {
 
   const [plants, setPlants] = useState<Plant[]>([]);
   const [kind, setKind] = useState<"care" | "cooking">("care");
+  const [recordedAt, setRecordedAt] = useState("");
   const [plantId, setPlantId] = useState("");
   const [cookingPlants, setCookingPlants] = useState<string[]>([]);
   const [tags, setTags] = useState<Record<string, boolean>>({});
@@ -52,6 +53,16 @@ export default function EditRecordPage() {
         setPlantId(row.plant_id ?? "");
         setCookingPlants(row.record_plants.map((rp) => rp.plant_id));
         setComment(row.comment ?? "");
+        // 既存の記録日時を datetime-local 形式（日本時間）に変換
+        const jst = new Intl.DateTimeFormat("sv-SE", {
+          timeZone: "Asia/Tokyo",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        }).format(new Date(row.recorded_at)); // "2026-06-30 22:15"
+        setRecordedAt(jst.replace(" ", "T"));
         setTags({
           water_changed: row.water_changed,
           nutrient_added: row.nutrient_added,
@@ -109,6 +120,9 @@ export default function EditRecordPage() {
     const { error: upErr } = await supabase
       .from("records")
       .update({
+        recorded_at: recordedAt
+          ? new Date(recordedAt).toISOString()
+          : undefined,
         plant_id: kind === "care" ? plantId : null,
         comment: comment.trim() || null,
         water_changed: !!tags.water_changed,
@@ -189,6 +203,17 @@ export default function EditRecordPage() {
       </div>
 
       <div className="space-y-2 px-4">
+        {/* 記録日時 */}
+        <div>
+          <p className="mb-2 text-sm font-semibold text-gray-600">記録日時</p>
+          <input
+            type="datetime-local"
+            value={recordedAt}
+            onChange={(e) => setRecordedAt(e.target.value)}
+            className="block w-full box-border rounded-lg border px-3 py-2 text-sm"
+          />
+        </div>
+
         {/* 植物選択 */}
         {kind === "care" ? (
           <div>

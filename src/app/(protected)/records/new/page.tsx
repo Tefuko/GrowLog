@@ -13,6 +13,7 @@ export default function NewRecordPage() {
   const router = useRouter();
   const [plants, setPlants] = useState<Plant[]>([]);
   const [kind, setKind] = useState<Kind>("care");
+  const [recordedAt, setRecordedAt] = useState("");
   const [plantId, setPlantId] = useState<string>(""); // 世話用：単一
   const [cookingPlants, setCookingPlants] = useState<string[]>([]); // 料理用：複数
   const [tags, setTags] = useState<Record<string, boolean>>({});
@@ -31,6 +32,20 @@ export default function NewRecordPage() {
         setPlants(data ?? []);
         if (data?.length) setPlantId(data[0].id);
       });
+  }, []);
+
+  useEffect(() => {
+    // 現在の日本時間を datetime-local 形式（YYYY-MM-DDTHH:mm）で初期値に
+    const now = new Date();
+    const jst = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: "Asia/Tokyo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(now); // "2026-06-30 22:15" の形
+    setRecordedAt(jst.replace(" ", "T"));
   }, []);
 
   const toggleTag = (key: string) => setTags((t) => ({ ...t, [key]: !t[key] }));
@@ -59,6 +74,9 @@ export default function NewRecordPage() {
       .from("records")
       .insert({
         kind,
+        recorded_at: recordedAt
+          ? new Date(recordedAt).toISOString()
+          : undefined,
         plant_id: kind === "care" ? plantId : null,
         comment: comment.trim() || null,
         water_changed: !!tags.water_changed,
@@ -128,6 +146,17 @@ export default function NewRecordPage() {
               {k === "care" ? "🌿 世話" : "🍳 料理"}
             </button>
           ))}
+        </div>
+
+        {/* 記録日時 */}
+        <div>
+          <p className="mb-2 text-sm font-semibold text-gray-600">記録日時</p>
+          <input
+            type="datetime-local"
+            value={recordedAt}
+            onChange={(e) => setRecordedAt(e.target.value)}
+            className="block w-full box-border rounded-lg border px-3 py-2 text-sm"
+          />
         </div>
 
         {/* 植物選択 */}
