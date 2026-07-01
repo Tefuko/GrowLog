@@ -176,8 +176,8 @@ export default function Home() {
             >
               {/* 写真スワイプ（リンクの外） */}
               {photos.length > 0 && (
-                <div className="relative">
-                  <div className="flex snap-x snap-mandatory overflow-x-auto">
+                <div className="relative w-full overflow-hidden">
+                  <div className="flex w-full snap-x snap-mandatory overflow-x-auto">
                     {photos.map((p, i) => {
                       const url = photoUrls[p.photo_path];
                       return url ? (
@@ -185,7 +185,7 @@ export default function Home() {
                           key={i}
                           src={url}
                           alt=""
-                          className="h-40 w-full flex-none snap-center object-cover"
+                          className="h-40 w-full flex-none basis-full snap-center object-cover"
                         />
                       ) : null;
                     })}
