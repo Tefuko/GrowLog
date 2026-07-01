@@ -1,11 +1,11 @@
 import type { MetadataRoute } from 'next';
-import { THEME_COLOR, BACKGROUND_COLOR } from '@/lib/theme';
+import { THEME_COLOR, BACKGROUND_COLOR, APP_NAME, APP_DESCRIPTION } from '@/lib/theme';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Grow Log',
-    short_name: 'Grow Log',
-    description: '水耕栽培の成長記録',
+    name: APP_NAME,
+    short_name: APP_NAME,
+    description: APP_DESCRIPTION,
     start_url: '/',
     display: 'standalone',
     background_color: BACKGROUND_COLOR,
