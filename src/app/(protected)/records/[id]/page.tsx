@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { BackButton } from "@/components/BackButton";
 import { supabase } from "@/lib/supabase";
 import { formatJST } from "@/lib/date";
 import { CARE_TAGS } from "@/lib/tags";
@@ -96,10 +97,8 @@ export default function RecordDetailPage() {
   return (
     <main className="mx-auto max-w-md pb-24">
       {/* 戻る */}
-      <div className="p-4">
-        <button onClick={() => router.back()} className="text-2xl">
-          ←
-        </button>
+      <div className="flex justify-end p-4">
+        <BackButton />
       </div>
 
       {/* 写真スワイプ */}

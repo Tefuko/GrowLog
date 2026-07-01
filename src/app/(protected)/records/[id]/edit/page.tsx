@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { BackButton } from "@/components/BackButton";
 import { supabase } from "@/lib/supabase";
 import { compressImage } from "@/lib/image";
 import { CARE_TAGS } from "@/lib/tags";
@@ -179,160 +180,157 @@ export default function EditRecordPage() {
   if (loading) return <main className="p-6 text-gray-400">読み込み中...</main>;
 
   return (
-    <main className="mx-auto max-w-md p-4 pb-24 space-y-5">
-      <div className="flex items-center gap-3">
-        <button onClick={() => router.back()} className="text-2xl">
-          ←
-        </button>
-        <h1 className="text-lg font-bold">記録を編集</h1>
+    <main className="mx-auto max-w-md p-4 pb-24">
+      <div className="flex items-center justify-between p-4">
+        <p className="inline-block rounded-full bg-gray-100 px-3 py-1 text-sm font-bold text-gray-600">
+          {kind === "care" ? "🌿 世話の記録" : "🍳 料理の記録"}
+        </p>
+        <BackButton />
       </div>
 
-      {/* 種別は表示のみ（変更不可） */}
-      <p className="inline-block rounded-full bg-gray-100 px-3 py-1 text-sm font-bold text-gray-600">
-        {kind === "care" ? "🌿 世話の記録" : "🍳 料理の記録"}
-      </p>
+      <div className="space-y-2 px-4">
+        {/* 植物選択 */}
+        {kind === "care" ? (
+          <div>
+            <p className="mb-2 text-sm font-semibold text-gray-600">植物</p>
+            <select
+              value={plantId}
+              onChange={(e) => setPlantId(e.target.value)}
+              className="w-full rounded-lg border p-3"
+            >
+              {plants.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.icon} {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : (
+          <div>
+            <p className="mb-2 text-sm font-semibold text-gray-600">
+              使った植物（複数可・任意）
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {plants.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => toggleCookingPlant(p.id)}
+                  className={`rounded-full border px-3 py-1.5 text-sm font-bold ${
+                    cookingPlants.includes(p.id)
+                      ? "border-green-700 bg-green-700 text-white"
+                      : "border-gray-200 text-gray-500"
+                  }`}
+                >
+                  {p.icon} {p.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
-      {/* 植物選択 */}
-      {kind === "care" ? (
-        <div>
-          <p className="mb-2 text-sm font-semibold text-gray-600">植物</p>
-          <select
-            value={plantId}
-            onChange={(e) => setPlantId(e.target.value)}
-            className="w-full rounded-lg border p-3"
-          >
-            {plants.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.icon} {p.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      ) : (
+        {/* 写真：既存＋新規 */}
         <div>
           <p className="mb-2 text-sm font-semibold text-gray-600">
-            使った植物（複数可・任意）
+            写真（最大5枚・現在{remainingCount}枚）
           </p>
           <div className="flex flex-wrap gap-2">
-            {plants.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => toggleCookingPlant(p.id)}
-                className={`rounded-full border px-3 py-1.5 text-sm font-bold ${
-                  cookingPlants.includes(p.id)
-                    ? "border-green-700 bg-green-700 text-white"
-                    : "border-gray-200 text-gray-500"
-                }`}
-              >
-                {p.icon} {p.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* 写真：既存＋新規 */}
-      <div>
-        <p className="mb-2 text-sm font-semibold text-gray-600">
-          写真（最大5枚・現在{remainingCount}枚）
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {/* 既存（削除マークが付いていないもの） */}
-          {existingPhotos
-            .filter((p) => !removedPaths.includes(p.photo_path))
-            .map((p) => (
-              <div key={p.photo_path} className="relative">
+            {/* 既存（削除マークが付いていないもの） */}
+            {existingPhotos
+              .filter((p) => !removedPaths.includes(p.photo_path))
+              .map((p) => (
+                <div key={p.photo_path} className="relative">
+                  <img
+                    src={p.url}
+                    alt=""
+                    className="h-20 w-20 rounded-lg object-cover"
+                  />
+                  <button
+                    onClick={() => setRemovedPaths((r) => [...r, p.photo_path])}
+                    className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-black/70 text-xs text-white"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            {/* 新規 */}
+            {newFiles.map((f, i) => (
+              <div key={i} className="relative">
                 <img
-                  src={p.url}
+                  src={URL.createObjectURL(f)}
                   alt=""
                   className="h-20 w-20 rounded-lg object-cover"
                 />
                 <button
-                  onClick={() => setRemovedPaths((r) => [...r, p.photo_path])}
+                  onClick={() =>
+                    setNewFiles((arr) => arr.filter((_, idx) => idx !== i))
+                  }
                   className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-black/70 text-xs text-white"
                 >
                   ×
                 </button>
               </div>
             ))}
-          {/* 新規 */}
-          {newFiles.map((f, i) => (
-            <div key={i} className="relative">
-              <img
-                src={URL.createObjectURL(f)}
-                alt=""
-                className="h-20 w-20 rounded-lg object-cover"
-              />
-              <button
-                onClick={() =>
-                  setNewFiles((arr) => arr.filter((_, idx) => idx !== i))
-                }
-                className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-black/70 text-xs text-white"
-              >
-                ×
-              </button>
-            </div>
-          ))}
-          {/* 追加ボタン */}
-          {remainingCount < 5 && (
-            <label className="flex h-20 w-20 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-green-700 text-2xl text-green-700">
-              ＋
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={onPickFiles}
-                className="hidden"
-              />
-            </label>
-          )}
-        </div>
-      </div>
-
-      {/* タグ（careのみ） */}
-      {kind === "care" && (
-        <div>
-          <p className="mb-2 text-sm font-semibold text-gray-600">
-            お世話したこと
-          </p>
-          <div className="grid grid-cols-2 gap-2">
-            {CARE_TAGS.map((t) => (
-              <button
-                key={t.key}
-                onClick={() => toggleTag(t.key)}
-                className={`flex items-center gap-2 rounded-xl border p-3 text-sm font-bold ${
-                  tags[t.key]
-                    ? "border-green-700 bg-green-50 text-green-800"
-                    : "border-gray-200 text-gray-500"
-                }`}
-              >
-                <span className="text-lg">{t.emoji}</span>
-                {t.label}
-              </button>
-            ))}
+            {/* 追加ボタン */}
+            {remainingCount < 5 && (
+              <label className="flex h-20 w-20 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-green-700 text-2xl text-green-700">
+                ＋
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={onPickFiles}
+                  className="hidden"
+                />
+              </label>
+            )}
           </div>
         </div>
-      )}
 
-      {/* コメント */}
-      <div>
-        <p className="mb-2 text-sm font-semibold text-gray-600">コメント</p>
-        <textarea
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          className="h-24 w-full resize-none rounded-lg border p-3"
-        />
+        {/* タグ（careのみ） */}
+        {kind === "care" && (
+          <div>
+            <p className="mb-2 text-sm font-semibold text-gray-600">
+              お世話したこと
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {CARE_TAGS.map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => toggleTag(t.key)}
+                  className={`flex items-center gap-2 rounded-xl border p-3 text-sm font-bold ${
+                    tags[t.key]
+                      ? "border-green-700 bg-green-50 text-green-800"
+                      : "border-gray-200 text-gray-500"
+                  }`}
+                >
+                  <span className="text-lg">{t.emoji}</span>
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* コメント */}
+        <div>
+          <p className="mb-2 text-sm font-semibold text-gray-600">コメント</p>
+          <textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            className="h-24 w-full resize-none rounded-lg border p-3"
+          />
+        </div>
+
+        {error && <p className="text-sm text-red-600">{error}</p>}
+
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="w-full rounded-lg bg-green-700 p-3 font-bold text-white disabled:opacity-50"
+        >
+          {saving ? "保存中..." : "更新する"}
+        </button>
       </div>
-
-      {error && <p className="text-sm text-red-600">{error}</p>}
-
-      <button
-        onClick={handleSave}
-        disabled={saving}
-        className="w-full rounded-lg bg-green-700 p-3 font-bold text-white disabled:opacity-50"
-      >
-        {saving ? "保存中..." : "更新する"}
-      </button>
     </main>
   );
 }

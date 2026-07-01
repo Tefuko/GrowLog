@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { daysSince, formatDateJST, formatJST } from "@/lib/date";
 import { supabase } from "@/lib/supabase";
 import { CARE_TAGS } from "@/lib/tags";
-import { THEME_COLOR, BACKGROUND_COLOR } from "@/lib/theme";
+import { THEME_COLOR, LABEL_CLASS } from "@/lib/theme";
 import type { Plant, RecordRow } from "@/lib/types";
 
 type KindFilter = "all" | "care" | "cooking";
@@ -92,7 +92,7 @@ export default function Home() {
             await supabase.auth.signOut();
             router.replace("/login");
           }}
-          className="text-sm"
+          className={LABEL_CLASS}
           style={{ color: THEME_COLOR }}
         >
           ログアウト
