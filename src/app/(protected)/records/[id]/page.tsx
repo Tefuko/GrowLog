@@ -78,10 +78,12 @@ export default function RecordDetailPage() {
   };
 
   if (loading) {
-    return <main className="p-6 text-gray-400">読み込み中...</main>;
+    return <main className="p-6 text-gray-400 dark:text-gray-500">読み込み中...</main>;
   }
   if (!record) {
-    return <main className="p-6 text-gray-400">記録が見つかりません。</main>;
+    return (
+      <main className="p-6 text-gray-400 dark:text-gray-500">記録が見つかりません。</main>
+    );
   }
 
   const plantName = (pid: string | null) =>
@@ -121,12 +123,14 @@ export default function RecordDetailPage() {
       <div className="p-5">
         <p className="text-lg font-bold">{formatJST(record.recorded_at)}</p>
         {names && (
-          <p className="mt-1 text-sm text-green-800 font-semibold">{names}</p>
+          <p className="mt-1 text-sm text-green-800 font-semibold dark:text-green-300">
+            {names}
+          </p>
         )}
 
         <div className="mt-3 flex flex-wrap gap-1.5">
           {record.kind === "cooking" ? (
-            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-orange-700">
+            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-orange-700 dark:bg-gray-800 dark:text-orange-400">
               🍳 料理
             </span>
           ) : (
@@ -134,7 +138,7 @@ export default function RecordDetailPage() {
               (t) => (
                 <span
                   key={t.key}
-                  className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-700"
+                  className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-700 dark:bg-gray-800 dark:text-gray-300"
                 >
                   {t.emoji}
                   {t.label}
@@ -145,7 +149,7 @@ export default function RecordDetailPage() {
         </div>
 
         {record.comment && (
-          <p className="mt-4 whitespace-pre-wrap rounded-xl bg-white p-4 shadow text-sm leading-relaxed">
+          <p className="mt-4 whitespace-pre-wrap rounded-xl bg-white p-4 shadow text-sm leading-relaxed dark:bg-gray-900">
             {record.comment}
           </p>
         )}
@@ -160,7 +164,7 @@ export default function RecordDetailPage() {
         <button
           onClick={handleDelete}
           disabled={deleting}
-          className="mt-6 w-full rounded-lg border border-red-300 p-3 text-sm font-bold text-red-600 disabled:opacity-50"
+          className="mt-6 w-full rounded-lg border border-red-300 p-3 text-sm font-bold text-red-600 disabled:opacity-50 dark:border-red-900 dark:text-red-400"
         >
           {deleting ? "削除中..." : "この記録を削除"}
         </button>

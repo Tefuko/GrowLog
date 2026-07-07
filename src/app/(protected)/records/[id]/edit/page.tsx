@@ -191,12 +191,13 @@ export default function EditRecordPage() {
     router.replace(`/records/${id}`);
   };
 
-  if (loading) return <main className="p-6 text-gray-400">読み込み中...</main>;
+  if (loading)
+    return <main className="p-6 text-gray-400 dark:text-gray-500">読み込み中...</main>;
 
   return (
     <main className="mx-auto max-w-md p-4 pb-24">
       <div className="flex items-center justify-between p-4">
-        <p className="inline-block rounded-full bg-gray-100 px-3 py-1 text-sm font-bold text-gray-600">
+        <p className="inline-block rounded-full bg-gray-100 px-3 py-1 text-sm font-bold text-gray-600 dark:bg-gray-800 dark:text-gray-300">
           {kind === "care" ? "🌿 世話の記録" : "🍳 料理の記録"}
         </p>
         <BackButton />
@@ -205,7 +206,7 @@ export default function EditRecordPage() {
       <div className="space-y-2 px-4">
         {/* 記録日時 */}
         <div>
-          <p className="mb-2 text-sm font-semibold text-gray-600">記録日時</p>
+          <p className="mb-2 text-sm font-semibold text-gray-600 dark:text-gray-300">記録日時</p>
           <input
             type="datetime-local"
             value={recordedAt}
@@ -217,7 +218,7 @@ export default function EditRecordPage() {
         {/* 植物選択 */}
         {kind === "care" ? (
           <div>
-            <p className="mb-2 text-sm font-semibold text-gray-600">植物</p>
+            <p className="mb-2 text-sm font-semibold text-gray-600 dark:text-gray-300">植物</p>
             <select
               value={plantId}
               onChange={(e) => setPlantId(e.target.value)}
@@ -232,7 +233,7 @@ export default function EditRecordPage() {
           </div>
         ) : (
           <div>
-            <p className="mb-2 text-sm font-semibold text-gray-600">
+            <p className="mb-2 text-sm font-semibold text-gray-600 dark:text-gray-300">
               使った植物（複数可・任意）
             </p>
             <div className="flex flex-wrap gap-2">
@@ -243,7 +244,7 @@ export default function EditRecordPage() {
                   className={`rounded-full border px-3 py-1.5 text-sm font-bold ${
                     cookingPlants.includes(p.id)
                       ? "border-green-700 bg-green-700 text-white"
-                      : "border-gray-200 text-gray-500"
+                      : "border-gray-200 text-gray-500 dark:border-gray-700 dark:text-gray-400"
                   }`}
                 >
                   {p.icon} {p.name}
@@ -255,7 +256,7 @@ export default function EditRecordPage() {
 
         {/* 写真：既存＋新規 */}
         <div>
-          <p className="mb-2 text-sm font-semibold text-gray-600">
+          <p className="mb-2 text-sm font-semibold text-gray-600 dark:text-gray-300">
             写真（最大5枚・現在{remainingCount}枚）
           </p>
           <div className="flex flex-wrap gap-2">
@@ -314,7 +315,7 @@ export default function EditRecordPage() {
         {/* タグ（careのみ） */}
         {kind === "care" && (
           <div>
-            <p className="mb-2 text-sm font-semibold text-gray-600">
+            <p className="mb-2 text-sm font-semibold text-gray-600 dark:text-gray-300">
               お世話したこと
             </p>
             <div className="grid grid-cols-2 gap-2">
@@ -324,8 +325,8 @@ export default function EditRecordPage() {
                   onClick={() => toggleTag(t.key)}
                   className={`flex items-center gap-2 rounded-xl border p-3 text-sm font-bold ${
                     tags[t.key]
-                      ? "border-green-700 bg-green-50 text-green-800"
-                      : "border-gray-200 text-gray-500"
+                      ? "border-green-700 bg-green-50 text-green-800 dark:border-green-500 dark:bg-green-950 dark:text-green-300"
+                      : "border-gray-200 text-gray-500 dark:border-gray-700 dark:text-gray-400"
                   }`}
                 >
                   <span className="text-lg">{t.emoji}</span>
@@ -338,7 +339,7 @@ export default function EditRecordPage() {
 
         {/* コメント */}
         <div>
-          <p className="mb-2 text-sm font-semibold text-gray-600">コメント</p>
+          <p className="mb-2 text-sm font-semibold text-gray-600 dark:text-gray-300">コメント</p>
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
@@ -346,7 +347,7 @@ export default function EditRecordPage() {
           />
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
         <button
           onClick={handleSave}

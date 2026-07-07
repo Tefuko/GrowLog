@@ -3,11 +3,14 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --theme: #376d44; /* テーマ緑（ライト） */
+  color-scheme: light dark; /* date入力・select等のネイティブUIをOSに追従させる */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-theme: var(--theme); /* text-theme / border-theme / bg-theme が使えるようになる */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -16,6 +19,7 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --theme: #7fc98f; /* 黒背景で読める明るめの緑 */
   }
 }
 

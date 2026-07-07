@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { BackButton } from '@/components/BackButton';
 import { supabase } from '@/lib/supabase';
 
 export default function NewPlantPage() {
@@ -37,10 +38,13 @@ export default function NewPlantPage() {
 
   return (
     <main className="mx-auto max-w-md p-6 space-y-6">
-      <h1 className="text-xl font-bold">植物を追加</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold">植物を追加</h1>
+        <BackButton />
+      </div>
 
       <div>
-        <p className="mb-2 text-sm font-semibold text-gray-600">アイコン（絵文字1文字）</p>
+        <p className="mb-2 text-sm font-semibold text-gray-600 dark:text-gray-300">アイコン（絵文字1文字）</p>
         <input
           value={icon}
           onChange={(e) => setIcon(e.target.value)}
@@ -48,13 +52,13 @@ export default function NewPlantPage() {
           placeholder="🌿"
           className="w-20 rounded-lg border p-3 text-center text-3xl"
         />
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
           スマホの絵文字キーボードから好きな絵文字を入力できます
         </p>
       </div>
 
       <div>
-        <p className="mb-2 text-sm font-semibold text-gray-600">植物名</p>
+        <p className="mb-2 text-sm font-semibold text-gray-600 dark:text-gray-300">植物名</p>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -64,7 +68,7 @@ export default function NewPlantPage() {
       </div>
 
       <div>
-        <p className="mb-2 text-sm font-semibold text-gray-600">栽培開始日</p>
+        <p className="mb-2 text-sm font-semibold text-gray-600 dark:text-gray-300">栽培開始日</p>
         <input
           type="date"
           value={startedAt}
@@ -73,7 +77,7 @@ export default function NewPlantPage() {
         />
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
       <button
         onClick={handleSave}

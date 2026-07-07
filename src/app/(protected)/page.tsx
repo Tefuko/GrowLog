@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { daysSince, formatDateJST, formatJST } from "@/lib/date";
 import { supabase } from "@/lib/supabase";
 import { CARE_TAGS } from "@/lib/tags";
-import { THEME_COLOR, LABEL_CLASS } from "@/lib/theme";
 import type { Plant, RecordRow } from "@/lib/types";
 
 type KindFilter = "all" | "care" | "cooking";
@@ -84,16 +83,13 @@ export default function Home() {
     <main className="mx-auto max-w-md pb-24">
       {/* ヘッダー */}
       <div className="flex items-center justify-between p-4">
-        <h1 className="text-lg font-bold" style={{ color: THEME_COLOR }}>
-          Grow Log📝
-        </h1>
+        <h1 className="text-lg font-bold text-theme">Grow Log📝</h1>
         <button
           onClick={async () => {
             await supabase.auth.signOut();
             router.replace("/login");
           }}
-          className={LABEL_CLASS}
-          style={{ color: THEME_COLOR }}
+          className="text-sm font-bold text-theme"
         >
           ログアウト
         </button>
@@ -118,8 +114,7 @@ export default function Home() {
         ))}
         <Link
           href="/plants/new"
-          className="flex-none rounded-full border border-dashed px-3 py-1.5 text-sm font-bold whitespace-nowrap"
-          style={{ borderColor: THEME_COLOR, color: THEME_COLOR }}
+          className="flex-none rounded-full border border-dashed border-theme px-3 py-1.5 text-sm font-bold whitespace-nowrap text-theme"
         >
           ＋ 追加
         </Link>
@@ -131,7 +126,7 @@ export default function Home() {
           const p = plants.find((pl) => pl.id === selectedPlant);
           if (!p?.started_at) return null;
           return (
-            <p className="px-4 pb-2 text-right text-sm text-green-800">
+            <p className="px-4 pb-2 text-right text-sm text-green-800 dark:text-green-300">
               {formatDateJST(p.started_at)}~ {daysSince(p.started_at)}日目
             </p>
           );
@@ -144,7 +139,9 @@ export default function Home() {
             key={k}
             onClick={() => setKindFilter(k)}
             className={`rounded-full px-3 py-1 text-sm font-bold ${
-              kindFilter === k ? "bg-green-50 text-green-800" : "text-gray-500"
+              kindFilter === k
+                ? "bg-green-50 text-green-800 dark:bg-green-950 dark:text-green-300"
+                : "text-gray-500 dark:text-gray-400"
             }`}
           >
             {k === "all" ? "すべて" : k === "care" ? "🫗 世話" : "🍳 料理"}
@@ -154,9 +151,9 @@ export default function Home() {
 
       {/* 記録一覧 */}
       <div className="space-y-4 p-4">
-        {loading && <p className="text-gray-400">読み込み中...</p>}
+        {loading && <p className="text-gray-400 dark:text-gray-500">読み込み中...</p>}
         {!loading && records.length === 0 && (
-          <p className="text-gray-400">まだ記録がありません。</p>
+          <p className="text-gray-400 dark:text-gray-500">まだ記録がありません。</p>
         )}
         {records.map((r) => {
           const photos = [...r.record_photos].sort(
@@ -172,11 +169,11 @@ export default function Home() {
           return (
             <div
               key={r.id}
-              className="overflow-hidden rounded-2xl bg-white shadow"
+              className="overflow-hidden rounded-2xl bg-white shadow dark:bg-gray-900"
             >
               {/* 写真スワイプ（リンクの外） */}
               {photos.length > 0 && (
-                <div className="relative w-full overflow-hidden">
+                <div className="w-full overflow-hidden">
                   <div className="flex w-full snap-x snap-mandatory overflow-x-auto">
                     {photos.map((p, i) => {
                       const url = photoUrls[p.photo_path];
@@ -190,19 +187,19 @@ export default function Home() {
                       ) : null;
                     })}
                   </div>
-                  {names && (
-                    <span className="absolute right-2 bottom-2 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-green-800">
-                      {names}
-                    </span>
-                  )}
                 </div>
               )}
 
               {/* 本文（ここをタップで詳細へ） */}
               <Link href={`/records/${r.id}`} className="block p-3">
                 <div className="mb-1 flex flex-wrap items-center gap-1.5">
+                  {names && (
+                    <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-bold text-green-800 dark:bg-green-950 dark:text-green-300">
+                      {names}
+                    </span>
+                  )}
                   {r.kind === "cooking" ? (
-                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-orange-700">
+                    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-orange-700 dark:bg-gray-800 dark:text-orange-400">
                       🍳 料理
                     </span>
                   ) : (
@@ -210,8 +207,7 @@ export default function Home() {
                       (t) => (
                         <span
                           key={t.key}
-                          className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold"
-                          style={{ color: THEME_COLOR }}
+                          className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-bold text-theme dark:bg-gray-800"
                         >
                           {t.emoji}
                           {t.label}
@@ -221,7 +217,7 @@ export default function Home() {
                   )}
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-gray-400 dark:text-gray-500">
                     {formatJST(r.recorded_at)}
                   </p>
                   {r.profiles && (
@@ -263,16 +259,11 @@ function Chip({
   return (
     <button
       onClick={onClick}
-      className="flex-none rounded-full border px-3 py-1.5 text-sm font-bold whitespace-nowrap"
-      style={
+      className={`flex-none rounded-full border px-3 py-1.5 text-sm font-bold whitespace-nowrap ${
         active
-          ? {
-              backgroundColor: THEME_COLOR,
-              borderColor: THEME_COLOR,
-              color: "#fff",
-            }
-          : { borderColor: "#d1d5db", color: THEME_COLOR }
-      }
+          ? "bg-theme border-theme text-white dark:text-gray-900"
+          : "border-gray-300 text-theme dark:border-gray-600"
+      }`}
     >
       {children}
     </button>
